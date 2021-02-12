@@ -13,7 +13,7 @@ FPS = 60
 R = 20  # vertex radius
 D = 2 * R
 EDGE_WIDTH = 2  # edge width
-FILE = open("graph.txt")
+FILE = open("graphs/graph.txt")
 vertexCount = 0
 isDeveloping = "the button is in Dev now. It will be ready in soon."
 
@@ -80,9 +80,10 @@ def regenGraph():
 
 def placingVertex():
     global vertexLocations, allVertexLocations
+    vertexLocations = {}
+    allVertexLocations = []
     for c in range(vertexCount):
         vertexLocations[c + 1] = random.randint(0 + D, WIDTH - D), random.randint(0 + D, HEIGHT - D)
-    allVertexLocations = []
     for key, value in vertexLocations.items():
         allVertexLocations.append(vertexLocations[key])
 
@@ -285,7 +286,7 @@ def mainMenu():
     pg.display.set_caption('Euler Path')
     screen = pg.display.set_mode((WIDTH, HEIGHT), 0, 32)
     font_graph = pg.font.SysFont("menu_font", 32)
-    bg_image = pg.transform.scale(pg.image.load("bg_image_dark.jpg"), (WIDTH, HEIGHT))
+    bg_image = pg.transform.scale(pg.image.load("images/bg_image_dark.jpg"), (WIDTH, HEIGHT))
 
     txt_colors = [(10, 10, 10), (50, 250, 250), (250, 160, 0), (20, 100, 100)]
     '''txt_colors = black, cyan, orange, darkCyan'''
@@ -317,14 +318,13 @@ def mainMenu():
                     print("choose file")
         if button_options.collidepoint((mx, my)):
             if click:
-                filePath = easygui.fileopenbox(filetypes=["*.txt"])
-                FILE = open(filePath) if filePath else open("graph.txt")
+                filePath = easygui.fileopenbox(filetypes=["*.txt"], default=r"graphs\*.txt")
+                FILE = open(filePath) if filePath else open("graphs/graph.txt")
                 graphMatrix = []
                 vertexConnections = {}
                 vertexCount = 0
                 graph = Graph(vertexCount)
                 graphLoad()
-                # update()
 
         drawText('Build Graph', font_graph, txt_colors[0], screen, bx + shadow, by + shadow)
         drawText('Build Graph', font_graph, txt_colors[1], screen, bx, by)
