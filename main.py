@@ -173,7 +173,7 @@ def graphBuilder():
                             if oddCount > 2:
                                 print("There are no Euler Path")
                                 finishAlgo = True
-                                dfsPath = "[a b s e n t]"
+                                dfsPath = "[absent]"
                                 break
                             elif oddCount == 0:
                                 print("There are Euler Tour!")
