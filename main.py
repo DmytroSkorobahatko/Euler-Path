@@ -93,7 +93,7 @@ def placingVertex():
 
 def findStart():
     oddCnt = 0
-    startVertex = finishVertex = -1
+    startVertex = finishVertex = 0
     for key, value in vertexLocations.items():
         if len(vertexConnections[key]) % 2 == 1:
             oddCnt += 1
@@ -101,10 +101,8 @@ def findStart():
             startVertex = key
         if len(vertexConnections[key]) % 2 == 1 and oddCnt == 2:
             finishVertex = key
-    if oddCnt > 2:
-        print("There are no Euler Path")
 
-    return startVertex, finishVertex
+    return oddCnt, startVertex, finishVertex
 
 
 '''# GRAPH BUILD ##############################'''
@@ -170,8 +168,24 @@ def graphBuilder():
                                 edges = []
 
                             loc = v
-                            sv, fv = findStart()
-
+                            oddCount, sv, fv = findStart()
+                            print(oddCount)
+                            if oddCount > 2:
+                                print("There are no Euler Path")
+                                finishAlgo = True
+                                dfsPath = "[a b s e n t]"
+                                break
+                            elif oddCount == 0:
+                                print("There are Euler Tour!")
+                                graph.printEulerTour()
+                                dfsPath = graph.path
+                                regenGraph()
+                                finishAlgo = True
+                                break
+                            elif oddCount == 1:
+                                sv, fv = sv + fv, -1
+                            elif oddCount == 2:
+                                pass
                             if loc == vertexLocations[sv]:  # or
                                 graph.printEulerTour()
                                 dfsPath = graph.path
@@ -198,7 +212,7 @@ def graphBuilder():
                 numEdge += 1
                 edges.append((dfsPath[numEdge - 1], dfsPath[numEdge]))
             numStep += 1
-            time.sleep(0.5)
+            time.sleep(0.2)
 
         drawGraph(screen, selectedVertex)  # vertexConnections, vertexLocations
         clock.tick(FPS)
@@ -288,14 +302,16 @@ def mainMenu():
     font_graph = pg.font.SysFont("menu_font", 32)
     bg_image = pg.transform.scale(pg.image.load("images/bg_image_dark.jpg"), (WIDTH, HEIGHT))
 
-    txt_colors = [(10, 10, 10), (50, 250, 250), (250, 160, 0), (20, 100, 100)]
+    txt_colors = [(10, 10, 10), (50, 250, 250), (220, 120, 0), (30, 150, 150)]
     '''txt_colors = black, cyan, orange, darkCyan'''
 
-    bWidth = WIDTH // 3
+    bWidth = WIDTH // 6
     bHeight = HEIGHT // 20
-    bx = WIDTH // 2 - bWidth
+    bx = WIDTH // 2 - bWidth * 2
     by = HEIGHT // 3 - bHeight
     shadow = 3
+    filePath = r"\graphs\graph.txt"
+    fileLoc = r"C:\Users\Kirill_07\PycharmProjects\graphEilerionianPath" + filePath
 
     click = False
 
@@ -318,18 +334,28 @@ def mainMenu():
                     print("choose file")
         if button_options.collidepoint((mx, my)):
             if click:
+                filePath = ""
                 filePath = easygui.fileopenbox(filetypes=["*.txt"], default=r"graphs\*.txt")
-                FILE = open(filePath) if filePath else open("graphs/graph.txt")
-                graphMatrix = []
-                vertexConnections = {}
-                vertexCount = 0
-                graph = Graph(vertexCount)
-                graphLoad()
+                if filePath:
+                    fileLoc = filePath
+                    FILE = open(filePath)
+                    graphMatrix = []
+                    vertexConnections = {}
+                    vertexCount = 0
+                    graph = Graph(vertexCount)
+                    graphLoad()
+                else:
+                    filePath = r"\graphs\graph.txt"
 
         drawText('Build Graph', font_graph, txt_colors[0], screen, bx + shadow, by + shadow)
         drawText('Build Graph', font_graph, txt_colors[1], screen, bx, by)
         drawText('Choose File', font_graph, txt_colors[0], screen, bx + shadow, by + bHeight * 2 + shadow)
         drawText('Choose File', font_graph, txt_colors[1], screen, bx, by + bHeight * 2)
+
+        drawText('   chosen : ', font_graph, txt_colors[0], screen, bx + shadow, by + bHeight * 3 + shadow)
+        drawText('   chosen : ', font_graph, txt_colors[1], screen, bx, by + bHeight * 3)
+        drawText(fileLoc[63::], font_graph, txt_colors[0], screen, bx + bWidth + shadow, by + bHeight * 3 + shadow)
+        drawText(fileLoc[63::], font_graph, txt_colors[1], screen, bx + bWidth, by + bHeight * 3)
 
         clock = pg.time.Clock()
         click = False
@@ -338,9 +364,7 @@ def mainMenu():
                 pg.quit()
                 sys.exit()
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    pg.quit()
-                    sys.exit()
+                pass
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     click = True

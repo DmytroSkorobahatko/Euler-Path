@@ -81,6 +81,12 @@ class Graph:
                 break
         if u == -1:
             print("There are no Euler Path")
+            for i in range(self.V):
+                if len(self.graph[i]) % 2 != 1:
+                    u = i
+                    break
+            print("There are Euler Tour!")
+            self.printEulerUtil(u)
         else:
             # Print tour starting from odd vertex
             self.printEulerUtil(u)
@@ -92,4 +98,4 @@ g1.addTwoEdges(0, 2)
 g1.addTwoEdges(1, 2)
 g1.addTwoEdges(2, 3)
 g1.printEulerTour()
-# print(g1.path)
+print(g1.path)
